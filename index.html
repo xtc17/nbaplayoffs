@@ -6,11 +6,21 @@
     <title>Courtside | NBA Playoff Pro</title>
   </head>
   <body>
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        var root = document.getElementById('root');
+        if (root) {
+          root.innerHTML = '<div style="background:#0a0a0a;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ff4444;font-family:sans-serif;text-align:center;padding:40px;"><div style="font-weight:900;font-size:48px;margin-bottom:20px;">CRITICAL SYSTEM FAILURE</div><div style="font-size:14px;opacity:0.8;max-width:600px;line-height:1.6;">' + msg + '</div><div style="margin-top:40px;font-size:10px;font-weight:bold;letter-spacing:0.2em;text-transform:uppercase;">Technical Report: JS_LOAD_FATAL</div></div>';
+        }
+        return false;
+      };
+      console.log('Courtside Bootstrapper Active');
+    </script>
     <div id="root">
       <div style="background: #0a0a0a; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #f97316; font-family: sans-serif; text-align: center; padding: 20px;">
-        <div style="width: 40px; height: 40px; border: 4px solid #f973161a; border-top-color: #f97316; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
-        <div style="font-weight: 900; font-style: italic; font-size: 24px; letter-spacing: -0.05em; text-transform: uppercase;">Initializing Courtside Core</div>
-        <div style="font-size: 10px; font-weight: bold; letter-spacing: 0.3em; text-transform: uppercase; margin-top: 10px; opacity: 0.5;">Establishing Secure Data Stream</div>
+        <div style="width: 48px; height: 48px; border: 4px solid #f973161a; border-top-color: #f97316; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 32px;"></div>
+        <div style="font-weight: 900; font-style: italic; font-size: 28px; letter-spacing: -0.05em; text-transform: uppercase; margin-bottom: 8px;">Initializing Courtside Core</div>
+        <div id="boot-status" style="font-size: 10px; font-weight: bold; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.5;">Establishing Secure Data Stream</div>
         <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
       </div>
     </div>

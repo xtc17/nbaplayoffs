@@ -23,12 +23,17 @@ async function fetchWithRetry(url: string) {
   for (const proxy of PROXIES) {
     try {
       const targetUrl = proxy ? `${proxy}${encodeURIComponent(url)}` : url;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout per attempt
+
       const res = await fetch(targetUrl, {
         headers: {
           'Accept': 'application/json'
         },
-        mode: 'cors'
+        mode: 'cors',
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
     } catch (err) {

@@ -7,6 +7,13 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss(), viteSingleFile()],
+    base: './',
+    build: {
+      target: 'esnext',
+      assetsInlineLimit: 100000000, // Large enough to inline everything
+      chunkSizeWarningLimit: 10000,
+      reportCompressedSize: false,
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),

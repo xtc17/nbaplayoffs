@@ -44,52 +44,59 @@ export default function Bracket({ events, onSelectGame }: { events: any[], onSel
 
   // Overlay real data if available
   events.forEach(event => {
-    const comp = event.competitions[0];
-    const home = comp.competitors.find((c: any) => c.homeAway === 'home');
-    const away = comp.competitors.find((c: any) => c.homeAway === 'away');
-    if (!home || !away) return;
+    try {
+      const comp = event?.competitions?.[0];
+      if (!comp) return;
+      const home = comp.competitors?.find((c: any) => c.homeAway === 'home');
+      const away = comp.competitors?.find((c: any) => c.homeAway === 'away');
+      if (!home || !away) return;
 
-    const hAbbr = home.team.abbreviation;
-    const aAbbr = away.team.abbreviation;
-    const key = [hAbbr, aAbbr].sort().join('-');
-
-    if (seriesMap.has(key)) {
-      const s = seriesMap.get(key);
-      const series = comp.series;
-      s.gameId = event.id;
-      if (series) {
-        // Construct a prominent summary for the series status
-        const hWins = series.competitors?.find((c: any) => c.id === home.team.id)?.wins || 0;
-        const aWins = series.competitors?.find((c: any) => c.id === away.team.id)?.wins || 0;
-        
-        if (hWins > 0 || aWins > 0) {
-          if (hWins === aWins) {
-            s.summary = `SERIES TIED ${hWins}-${aWins}`;
-          } else if (hWins > aWins) {
-            s.summary = `${home.team.abbreviation} LEADS ${hWins}-${aWins}`;
-          } else {
-            s.summary = `${away.team.abbreviation} LEADS ${aWins}-${hWins}`;
-          }
-          if (hWins === 4 || aWins === 4) {
-             s.summary = `SERIES: ${hWins === 4 ? home.team.abbreviation : away.team.abbreviation} WINS 4-${Math.min(hWins, aWins)}`;
-          }
-        } else {
-          s.summary = series.summary?.toUpperCase() || 'SERIES STARTING';
-        }
-        
-        s.homeWins = hWins;
-        s.awayWins = aWins;
-      }
-      s.isFinal = comp.status.type.completed;
+      const hAbbr = home.team?.abbreviation;
+      const aAbbr = away.team?.abbreviation;
+      if (!hAbbr || !aAbbr) return;
       
-      // Sync names and logos from API
-      if (hAbbr === s.home.abbreviation) {
-        s.home = home.team;
-        s.away = away.team;
-      } else {
-        s.home = away.team;
-        s.away = home.team;
+      const key = [hAbbr, aAbbr].sort().join('-');
+
+      if (seriesMap.has(key)) {
+        const s = seriesMap.get(key);
+        const series = comp.series;
+        s.gameId = event.id;
+        if (series) {
+          // Construct a prominent summary for the series status
+          const hWins = series.competitors?.find((c: any) => c.id === home.team.id)?.wins || 0;
+          const aWins = series.competitors?.find((c: any) => c.id === away.team.id)?.wins || 0;
+          
+          if (hWins > 0 || aWins > 0) {
+            if (hWins === aWins) {
+              s.summary = `SERIES TIED ${hWins}-${aWins}`;
+            } else if (hWins > aWins) {
+              s.summary = `${home.team.abbreviation} LEADS ${hWins}-${aWins}`;
+            } else {
+              s.summary = `${away.team.abbreviation} LEADS ${aWins}-${hWins}`;
+            }
+            if (hWins === 4 || aWins === 4) {
+               s.summary = `SERIES: ${hWins === 4 ? home.team.abbreviation : away.team.abbreviation} WINS 4-${Math.min(hWins, aWins)}`;
+            }
+          } else {
+            s.summary = series.summary?.toUpperCase() || 'SERIES STARTING';
+          }
+          
+          s.homeWins = hWins;
+          s.awayWins = aWins;
+        }
+        s.isFinal = comp.status?.type?.completed || false;
+        
+        // Sync names and logos from API
+        if (hAbbr === s.home.abbreviation) {
+          s.home = home.team;
+          s.away = away.team;
+        } else {
+          s.home = away.team;
+          s.away = home.team;
+        }
       }
+    } catch (e) {
+      console.warn('Malformed event skipped:', e);
     }
   });
 

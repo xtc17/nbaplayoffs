@@ -30,9 +30,19 @@ export default function GameDetail({ gameId }: { gameId: string }) {
     </div>
   );
 
-  const comp = data.header.competitions[0];
-  const away = comp.competitors.find((c: any) => c.homeAway === 'away');
-  const home = comp.competitors.find((c: any) => c.homeAway === 'home');
+  const header = data?.header;
+  if (!header) return (
+    <div className="p-24 text-center">
+      <h3 className="text-xl font-black uppercase italic mb-4">Transmission Fragmented</h3>
+      <p className="text-gray-500 text-sm">Waiting for header synchronization...</p>
+    </div>
+  );
+
+  const comp = header.competitions?.[0];
+  if (!comp) return null;
+  const away = comp.competitors?.find((c: any) => c.homeAway === 'away');
+  const home = comp.competitors?.find((c: any) => c.homeAway === 'home');
+  if (!home || !away) return null;
 
   return (
     <div className="space-y-12 max-w-6xl mx-auto pb-12">

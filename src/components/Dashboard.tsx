@@ -34,16 +34,23 @@ export default function Dashboard({ games, onSelectGame }: DashboardProps) {
 }
 
 function GameCard({ game, onClick, idx }: { game: any, onClick: () => void, idx: number, key?: any }) {
-  const comp = game.competitions[0];
-  const away = comp.competitors.find((c: any) => c.homeAway === 'away');
-  const home = comp.competitors.find((c: any) => c.homeAway === 'home');
-  const status = game.status.type;
+  const comp = game?.competitions?.[0];
+  if (!comp) return null;
+  
+  const away = comp.competitors?.find((c: any) => c.homeAway === 'away');
+  const home = comp.competitors?.find((c: any) => c.homeAway === 'home');
+  if (!home || !away) return null;
+
+  const status = game?.status?.type || {};
   const isLive = status.state === 'in';
   const isFinal = status.completed;
   
+  const aScore = parseInt(away.score) || 0;
+  const hScore = parseInt(home.score) || 0;
+
   const isCrunchTime = isLive && 
-    game.status.period >= 4 && 
-    Math.abs((parseInt(away.score) || 0) - (parseInt(home.score) || 0)) <= 5;
+    game?.status?.period >= 4 && 
+    Math.abs(aScore - hScore) <= 5;
 
   return (
     <motion.div
@@ -70,7 +77,7 @@ function GameCard({ game, onClick, idx }: { game: any, onClick: () => void, idx:
           ) : (
             <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
               <Clock className="w-3.5 h-3.5 text-gold" />
-              {new Date(game.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {game.date ? new Date(game.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBA'}
             </div>
           )}
         </div>
@@ -82,13 +89,13 @@ function GameCard({ game, onClick, idx }: { game: any, onClick: () => void, idx:
 
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 space-y-8">
-          <TeamRow team={away} winning={parseInt(away.score) > parseInt(home.score) && (isLive || isFinal)} />
+          <TeamRow team={away} winning={aScore > hScore && (isLive || isFinal)} />
           <div className="flex items-center gap-4">
              <div className="h-[1px] flex-1 bg-white/10" />
              <span className="font-editorial-serif text-gold text-lg opacity-40">vs</span>
              <div className="h-[1px] flex-1 bg-white/10" />
           </div>
-          <TeamRow team={home} winning={parseInt(home.score) > parseInt(away.score) && (isLive || isFinal)} />
+          <TeamRow team={home} winning={hScore > aScore && (isLive || isFinal)} />
         </div>
       </div>
 
