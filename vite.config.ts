@@ -7,7 +7,6 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss(), viteSingleFile()],
-    base: './',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
