@@ -9,9 +9,10 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss(), viteSingleFile()],
     base: './',
     build: {
-      target: 'esnext',
-      assetsInlineLimit: 100000000, // Large enough to inline everything
+      target: 'es2020', // Higher compatibility than esnext
+      assetsInlineLimit: 100000000, 
       chunkSizeWarningLimit: 10000,
+      cssCodeSplit: false, // Force single CSS
       reportCompressedSize: false,
     },
     resolve: {

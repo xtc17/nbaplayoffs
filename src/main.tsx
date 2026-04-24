@@ -10,8 +10,13 @@ if (!rootElement) {
   throw new Error('Failed to find root element');
 }
 
+// @ts-ignore
+window.__COURTSIDE_BOOTED__ = true;
 const statusEl = document.getElementById('boot-status');
 if (statusEl) statusEl.innerText = 'Synchronizing React Kernel';
+
+const container = document.getElementById('boot-container');
+if (container) container.style.opacity = '0';
 
 createRoot(rootElement).render(
   <StrictMode>
