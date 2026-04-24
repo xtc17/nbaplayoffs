@@ -13,18 +13,30 @@ export default function App() {
   const [games, setGames] = useState<any[]>([]);
   const [bracketData, setBracketData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  useEffect(() => {
+    const handleError = (e: ErrorEvent) => {
+      setError(`System Panic: ${e.message}`);
+    };
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
   const loadData = useCallback(async () => {
     setIsRefreshing(true);
+    setError(null);
     try {
       const [scores, bracket] = await Promise.all([fetchScoreboard(), fetchBracket()]);
+      if (!scores || !bracket) throw new Error('Incomplete data stream received');
       setGames(scores.events || []);
       setBracketData(bracket.events || []);
       setLastUpdate(new Date());
     } catch (err) {
       console.error('Failed to sync NBA data:', err);
+      setError(err instanceof Error ? err.message : 'Unknown technical disruption');
     } finally {
       setLoading(false);
       setIsRefreshing(false);
@@ -119,7 +131,25 @@ export default function App() {
 
         <div className="px-6 md:px-12 pb-24 flex-grow">
           <AnimatePresence mode="wait">
-            {!loading ? (
+            {error ? (
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                className="h-[50vh] flex flex-col items-center justify-center p-12 glass rounded-3xl text-center border-red-500/20"
+              >
+                <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
+                  <RefreshCw className="w-8 h-8 text-red-500" />
+                </div>
+                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-white mb-2">Sync Connection Lost</h3>
+                <p className="text-gray-400 max-w-md text-sm mb-8">{error}. This is often due to network security restrictions or browser CORS policies.</p>
+                <button 
+                  onClick={loadData}
+                  className="px-8 py-3 bg-white text-black font-black uppercase tracking-widest text-[10px] italic hover:bg-gold transition-colors"
+                >
+                  Force Data Re-Sync
+                </button>
+              </motion.div>
+            ) : !loading ? (
               <motion.div
                 key={view + (selectedGameId || '')}
                 initial={{ opacity: 0, scale: 0.98 }}
