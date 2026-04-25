@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Courtside | NBA Playoff Pro</title>
+    <script type="module" crossorigin src="./assets/index-BFpyFbB9.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BrtQSZW-.css">
+  </head>
+  <body>
+    <script>
+      window.__COURTSIDE_START__ = Date.now();
+      window.onerror = function(msg, url, line, col, error) {
+        var root = document.getElementById('root');
+        if (root) {
+          var isTsxError = msg.toLowerCase().indexOf('tsx') !== -1 || msg.toLowerCase().indexOf('typescript') !== -1;
+          var errorHtml = '<div style="background:#0a0a0a;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ff4444;font-family:sans-serif;text-align:center;padding:40px;">';
+          errorHtml += '<div style="font-weight:900;font-size:48px;margin-bottom:20px;">' + (isTsxError ? 'DEPLOYMENT ERROR' : 'SYSTEM FAILURE') + '</div>';
+          errorHtml += '<div style="font-size:14px;opacity:0.8;max-width:600px;line-height:1.6;">' + msg + '</div>';
+          if (isTsxError) {
+            errorHtml += '<div style="margin-top:20px;color:#gold;font-size:12px;font-weight:bold;">TIPS: You are trying to run .tsx files directly. You must host the contents of the "dist" folder, not the root project.</div>';
+          }
+          errorHtml += '<div style="margin-top:40px;font-size:10px;font-weight:bold;letter-spacing:0.2em;text-transform:uppercase;opacity:0.5;">Diagnostics: ' + (url || 'inline') + ':' + line + '</div></div>';
+          root.innerHTML = errorHtml;
+        }
+        return false;
+      };
+      console.log('Courtside Bootstrapper Active');
+    </script>
+    <div id="root">
+      <div id="boot-container" style="background: #0a0a0a; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #f97316; font-family: sans-serif; text-align: center; padding: 20px; transition: opacity 0.5s ease;">
+        <div style="width: 48px; height: 48px; border: 4px solid #f973161a; border-top-color: #f97316; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 32px;"></div>
+        <div style="font-weight: 900; font-style: italic; font-size: 28px; letter-spacing: -0.05em; text-transform: uppercase; margin-bottom: 8px;">Initializing Courtside Core</div>
+        <div id="boot-status" style="font-size: 10px; font-weight: bold; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.5;">Establishing Secure Data Stream</div>
+        <div id="boot-sub-status" style="font-size: 9px; margin-top: 15px; font-family: monospace; opacity: 0.3;">BOOT_SEQ: ATTACHED</div>
+        <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+      </div>
+    </div>
+    <script>
+      // Fallback if the module fails to load after 8 seconds
+      setTimeout(function() {
+        if (!window.__COURTSIDE_BOOTED__) {
+          var status = document.getElementById('boot-status');
+          if (status) {
+            status.innerText = 'BOOT_FAILURE: MODULE_TIMEOUT';
+            status.style.color = '#ff4444';
+          }
+          var subStatus = document.getElementById('boot-sub-status');
+          if (subStatus) {
+            subStatus.innerHTML = 'Module failed to execute. Ensure you have deployed the <b>dist/</b> folder.<br>Current URL: ' + window.location.href;
+            subStatus.style.opacity = '1';
+            subStatus.style.color = '#ffaa00';
+          }
+        }
+      }, 8000);
+    </script>
+  </body>
+</html>
+
