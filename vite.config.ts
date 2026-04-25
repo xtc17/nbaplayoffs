@@ -6,13 +6,10 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), viteSingleFile()],
+    plugins: [react(), tailwindcss()],
     base: './',
     build: {
-      target: 'es2020', // Higher compatibility than esnext
-      assetsInlineLimit: 100000000, 
-      chunkSizeWarningLimit: 10000,
-      cssCodeSplit: false, // Force single CSS
+      target: 'es2020',
       reportCompressedSize: false,
     },
     resolve: {
